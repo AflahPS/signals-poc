@@ -4,7 +4,7 @@ import { StationBody } from './station.interfaces';
 
 const createStationBody: Record<keyof StationBody, any> = {
   name: Joi.string().required(),
-  edges: Joi.array().items(Joi.string().required()),
+  createdBy: Joi.string()
 };
 
 export const createStation = {
@@ -33,7 +33,6 @@ export const updateStation = {
   }),
   body: Joi.object()
     .keys({
-      edges: createStationBody.edges,
       name: Joi.string(),
     })
     .min(1),

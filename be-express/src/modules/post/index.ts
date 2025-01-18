@@ -1,7 +1,7 @@
-import * as stationController from './station.controller';
-import * as stationInterfaces from './post.interfaces';
-import Station from './station.model';
-import * as stationService from './station.service';
-import * as stationValidation from './station.validation';
+import * as postController from './post.controller';
+import * as postInterfaces from './post.interfaces';
+import Post from './post.model';
+import * as postService from './post.service';
+import * as postValidation from './post.validation';
 
-export { stationController, stationInterfaces, Station, stationService, stationValidation };
+export { postController, postInterfaces, Post, postService, postValidation };

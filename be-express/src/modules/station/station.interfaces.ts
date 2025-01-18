@@ -1,9 +1,9 @@
-import mongoose, { Model, Document } from 'mongoose';
+import mongoose, { Model, Document, Types } from 'mongoose';
 import { QueryResult } from '../utils/paginate/paginate';
 
 export interface IStation {
   name: string;
-  edges: string[];
+  createdBy: Types.ObjectId;
 }
 
 export interface IStationDoc extends IStation, Document {}
