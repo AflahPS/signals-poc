@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { observer } from 'mobx-react-lite';
 import { userStore } from '../store';
+import { logout } from '../services';
 
 export const TopBar: FC = observer(() => {
   const { user, setUser } = userStore;
@@ -23,8 +24,12 @@ export const TopBar: FC = observer(() => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    // lopgout api
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.log('Token removal failed: ', error);
+    }
     setUser(undefined);
     setAnchorEl(null);
   };

@@ -13,14 +13,9 @@ import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { userStore } from '../store';
 import { userPassword } from '../config/vars';
-import {
-  login,
-  LoginPayload,
-  LoginResponse,
-  register,
-  RegisterPayload,
-} from '../services';
+import { login, LoginResponse, register } from '../services';
 import { ApiResponse } from '../models';
+import { postLoginHandler } from '../utils/helpers';
 
 export const Auth = observer(() => {
   const { setUser } = userStore;
@@ -65,6 +60,7 @@ export const Auth = observer(() => {
       }
       setLoading(false);
       setUser(data?.user);
+      postLoginHandler(data!);
     } catch (error) {
       setLoading(false);
       console.log(error);
