@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { objectId } from '../utils/validate/custom.validation';
-import { StationBody } from './station.interfaces';
+import { StationBody } from './post.interfaces';
 
 const createStationBody: Record<keyof StationBody, any> = {
   name: Joi.string().required(),

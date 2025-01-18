@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { password } from '../validate/custom.validation';
+import { password } from '../utils/validate/custom.validation';
 import { NewRegisteredUser } from '../user/user.interfaces';
 
 const registerBody: Record<keyof NewRegisteredUser, any> = {

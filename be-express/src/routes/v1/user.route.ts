@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { validate } from '../../modules/validate';
+import { validate } from '../../modules/utils/validate';
 import { auth } from '../../modules/auth';
 import { userController, userValidation } from '../../modules/user';
 
