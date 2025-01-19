@@ -7,6 +7,7 @@ import { IOptions } from '../utils/paginate/paginate';
 import * as stationService from './station.service';
 
 export const createStation = catchAsync(async (req: Request, res: Response) => {
+  req.body['createdBy'] = req.user._id;
   const station = await stationService.createStation(req.body);
   res.status(httpStatus.CREATED).send(station);
 });

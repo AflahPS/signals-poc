@@ -22,6 +22,7 @@ export const getPosts = {
     createdBy: Joi.string().custom(objectId),
     activeSignal: Joi.string(),
     search: Joi.string(),
+    populate: Joi.string(),
     sortBy: Joi.string(),
     projectBy: Joi.string(),
     limit: Joi.number().integer(),

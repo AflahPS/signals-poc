@@ -8,6 +8,9 @@ import { IOptions } from '../utils/paginate/paginate';
 import * as postService from './post.service';
 
 export const createPost = catchAsync(async (req: Request, res: Response) => {
+  req.body['createdBy'] = req.user._id;
+  req.body['lastChangeBy'] = req.user._id;
+  req.body['lastChangeAt'] = new Date();
   const post = await postService.createPost(req.body);
   res.status(httpStatus.CREATED).send(post);
 });

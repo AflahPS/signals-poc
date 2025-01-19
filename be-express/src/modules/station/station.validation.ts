@@ -14,6 +14,7 @@ export const createStation = {
 export const getStations = {
   query: Joi.object().keys({
     createdBy: Joi.string().custom(objectId),
+    populate: Joi.string(),
     search: Joi.string(),
     sortBy: Joi.string(),
     projectBy: Joi.string(),
