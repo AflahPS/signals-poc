@@ -12,7 +12,6 @@ router
 
 router
   .route('/:stationId')
-  .get(auth(), validate(stationValidation.getStation), stationController.getStation)
   .patch(auth(), validate(stationValidation.updateStation), stationController.updateStation)
   .delete(auth(), validate(stationValidation.deleteStation), stationController.deleteStation);
 

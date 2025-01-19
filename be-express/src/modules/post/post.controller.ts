@@ -13,8 +13,8 @@ export const createPost = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getPosts = catchAsync(async (req: Request, res: Response) => {
-  const filter = pick(req.query, ['name', 'role']);
-  const options: IOptions = pick(req.query, ['sortBy', 'limit', 'page', 'projectBy']);
+  const filter = pick(req.query, ['station', 'createdBy', 'activeSignal']);
+  const options: IOptions = pick(req.query, ['sortBy', 'limit', 'page', 'projectBy', 'search']);
   const result = await postService.queryPosts(filter, options);
   res.send(result);
 });

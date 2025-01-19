@@ -10,6 +10,7 @@ export interface QueryResult {
 }
 
 export interface IOptions {
+  search?: string;
   sortBy?: string;
   projectBy?: string;
   populate?: string;
@@ -37,7 +38,7 @@ const paginate = <T extends Document, U extends Model<U>>(schema: Schema<T>): vo
    * @param {string} [options.projectBy] - Fields to hide or include (default = '')
    * @returns {Promise<QueryResult>}
    */
-  schema.static('paginate', async function (filter: Record<string, any>, options: IOptions): Promise<QueryResult> {
+  schema.static('paginate', async function (filter: Record<string, any>, options: IOptions,  searchKeys?: string[]): Promise<QueryResult> {
     let sort: string = '';
     if (options.sortBy) {
       const sortingCriteria: any = [];
@@ -47,7 +48,7 @@ const paginate = <T extends Document, U extends Model<U>>(schema: Schema<T>): vo
       });
       sort = sortingCriteria.join(' ');
     } else {
-      sort = 'createdAt';
+      sort = '-createdAt';
     }
 
     let project: string = '';
@@ -59,12 +60,20 @@ const paginate = <T extends Document, U extends Model<U>>(schema: Schema<T>): vo
       });
       project = projectionCriteria.join(' ');
     } else {
-      project = '-createdAt -updatedAt';
+      project = '-_v';
     }
 
     const limit = options.limit && parseInt(options.limit.toString(), 10) > 0 ? parseInt(options.limit.toString(), 10) : 10;
     const page = options.page && parseInt(options.page.toString(), 10) > 0 ? parseInt(options.page.toString(), 10) : 1;
     const skip = (page - 1) * limit;
+
+    if (options.search?.trim() && searchKeys && searchKeys?.length > 0) {
+      const searchRegex = new RegExp(options.search?.trim(), 'i');
+      const searchConditions = searchKeys.map((key) => ({
+        [key]: { $regex: searchRegex },
+      }));
+      filter['$or'] = Array.isArray(filter['$or']) ? [...filter['$or'], ...searchConditions] : searchConditions;
+    }
 
     const countPromise = this.countDocuments(filter).exec();
     let docsPromise = this.find(filter).sort(sort).skip(skip).limit(limit).select(project);

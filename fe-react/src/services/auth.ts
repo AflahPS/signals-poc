@@ -1,7 +1,7 @@
 import { ApiResponse, IUser } from '../models';
 import { handleError } from '../utils/helpers';
 import { StorageKeys } from '../config';
-import { api } from './_base';
+import api from './_base';
 
 const base = '/auth';
 

@@ -1,13 +1,16 @@
 import React, { FC, MouseEvent, useState } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
+import {
+  AppBar,
+  Avatar,
+  Box,
+  capitalize,
+  IconButton,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import { MenuOutlined } from '@mui/icons-material';
 import { observer } from 'mobx-react-lite';
 import { userStore } from '../store';
 import { logout } from '../services';
@@ -45,7 +48,7 @@ export const TopBar: FC = observer(() => {
             aria-label="menu"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <MenuOutlined />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Signals POC
@@ -60,13 +63,13 @@ export const TopBar: FC = observer(() => {
                 onClick={handleMenu}
                 color="inherit"
               >
-                <AccountCircle />
+                <Avatar>{capitalize(user?.name[0])}</Avatar>
               </IconButton>
               <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
-                  vertical: 'top',
+                  vertical: 'bottom',
                   horizontal: 'right',
                 }}
                 keepMounted

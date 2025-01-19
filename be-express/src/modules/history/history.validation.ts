@@ -16,6 +16,8 @@ export const getHistory = {
   query: Joi.object().keys({
     post: Joi.string().custom(objectId),
     changedBy: Joi.string().custom(objectId),
+    signal: Joi.string(),
+    search: Joi.string(),
     sortBy: Joi.string(),
     projectBy: Joi.string(),
     limit: Joi.number().integer(),

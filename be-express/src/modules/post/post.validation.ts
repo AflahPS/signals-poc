@@ -20,6 +20,8 @@ export const getPosts = {
   query: Joi.object().keys({
     station: Joi.string().custom(objectId),
     createdBy: Joi.string().custom(objectId),
+    activeSignal: Joi.string(),
+    search: Joi.string(),
     sortBy: Joi.string(),
     projectBy: Joi.string(),
     limit: Joi.number().integer(),

@@ -24,7 +24,7 @@ export const createPost = async (postBody: PostBody): Promise<IPostDoc> => {
  * @returns {Promise<QueryResult>}
  */
 export const queryPosts = async (filter: Record<string, any>, options: IOptions): Promise<QueryResult> => {
-  const posts = await Post.paginate(filter, options);
+  const posts = await Post.paginate(filter, options, ['name']);
   return posts;
 };
 

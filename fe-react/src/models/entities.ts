@@ -10,3 +10,24 @@ export interface IUser extends MongoDoc {
   email: string;
   password?: string;
 }
+
+export interface IStation extends MongoDoc {
+  name: string;
+  createdBy: string;
+}
+
+export interface IPost extends MongoDoc {
+  name: string;
+  station: string;
+  availableSignals: string[];
+  activeSignal: string;
+  lastChangeAt: Date;
+  lastChangeBy: string;
+  createdBy: string;
+}
+
+export interface IHistory extends MongoDoc {
+  signal: string;
+  post: string;
+  changedBy: string;
+}

@@ -24,7 +24,7 @@ export const createStation = async (stationBody: StationBody): Promise<IStationD
  * @returns {Promise<QueryResult>}
  */
 export const queryStations = async (filter: Record<string, any>, options: IOptions): Promise<QueryResult> => {
-  const stations = await Station.paginate(filter, options);
+  const stations = await Station.paginate(filter, options, ['name']);
   return stations;
 };
 

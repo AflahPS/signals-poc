@@ -13,17 +13,12 @@ export const createStation = {
 
 export const getStations = {
   query: Joi.object().keys({
-    name: Joi.string(),
+    createdBy: Joi.string().custom(objectId),
+    search: Joi.string(),
     sortBy: Joi.string(),
     projectBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
-  }),
-};
-
-export const getStation = {
-  params: Joi.object().keys({
-    stationId: Joi.string().custom(objectId),
   }),
 };
 

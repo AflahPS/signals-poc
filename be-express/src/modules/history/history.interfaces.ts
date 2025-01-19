@@ -10,7 +10,7 @@ export interface IHistory {
 export interface IHistoryDoc extends IHistory, Document {}
 
 export interface IHistoryModel extends Model<IHistoryDoc> {
-  paginate(filter: Record<string, any>, options: Record<string, any>): Promise<QueryResult>;
+  paginate(filter: Record<string, any>, options: Record<string, any>, searchKeys?: (keyof IHistory)[]): Promise<QueryResult>;
 }
 
 export type HistoryBody = Partial<IHistory>;
