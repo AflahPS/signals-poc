@@ -1,7 +1,17 @@
-import { Box, Button, Grid, Stack, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+} from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
+import { AddOutlined, RestartAltOutlined, SearchOutlined } from '@mui/icons-material';
 import { StationsAutocomplete } from './StationsAutoComplete';
-import { IPost, IStation } from '../models';
+import { IPostPopulated, IStation } from '../models';
 import { PostCard } from './PostCard';
 import { AddStationModal } from './AddStationModal';
 import { getPosts } from '../services';
@@ -9,7 +19,7 @@ import { AddPostModal } from './AddPostModal';
 
 export const Home = () => {
   const [station, setStation] = useState<IStation | undefined>();
-  const [posts, setPosts] = useState<IPost[]>([]);
+  const [posts, setPosts] = useState<IPostPopulated[]>([]);
   const [stationModalOpen, setStationModalOpen] = useState(false);
   const [postModalOpen, setPostModalOpen] = useState(false);
   const [postPage, setPostPage] = useState(1);
@@ -20,10 +30,10 @@ export const Home = () => {
     async (stationId: string) => {
       try {
         setLoading(true);
-        const { data, error, message } = await getPosts({
+        const { data, error, message } = await getPosts<IPostPopulated>({
           sortBy: 'createdAt:desc',
           station: stationId,
-          // search: search.trim() || undefined,
+          populate: 'lastChangeBy',
           page: postPage,
           limit: 10,
           // populate: 'createdBy',
@@ -62,6 +72,7 @@ export const Home = () => {
         />
         <Button
           variant="contained"
+          startIcon={<AddOutlined />}
           sx={{ textTransform: 'none', textWrap: 'nowrap' }}
           onClick={() => {
             setStationModalOpen(true);
@@ -69,22 +80,75 @@ export const Home = () => {
         >
           Add Station
         </Button>
+        <Button
+          variant="contained"
+          startIcon={<RestartAltOutlined />}
+          sx={{ textTransform: 'none', textWrap: 'nowrap' }}
+          onClick={() => {
+            setStationModalOpen(true);
+          }}
+        >
+          Reset
+        </Button>
       </Box>
-      <Box border="1px solid red" width="100%" minHeight="25vh">
-        <Stack width="100%" direction="row" justifyContent="space-between">
-          <TextField size="small" />
-          <Button
-            variant="contained"
-            sx={{ textTransform: 'none', textWrap: 'nowrap' }}
-            onClick={() => {
-              setPostModalOpen(true);
-            }}
+      {station && (
+        <Stack spacing={2} width="100%" minHeight="25vh" py={2} px={1}>
+          <Stack width="100%" direction="row" justifyContent="space-between">
+            <TextField
+              size="small"
+              fullWidth
+              sx={{ width: '50%' }}
+              placeholder="Search post by name..."
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton>
+                      <SearchOutlined />{' '}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              startIcon={<AddOutlined />}
+              sx={{ textTransform: 'none', textWrap: 'nowrap' }}
+              onClick={() => {
+                setPostModalOpen(true);
+              }}
+            >
+              Add Post
+            </Button>
+          </Stack>
+          <Grid
+            container
+            width="100%"
+            height="100%"
+            gap={5}
+            alignItems="stretch"
           >
-            Add Post
-          </Button>
+            {loading ? (
+              <Grid item container justifyContent="center" alignItems="center">
+                <CircularProgress />
+              </Grid>
+            ) : (
+              posts?.map((el) => (
+                <Grid
+                  item
+                  width="30%"
+                  key={el?.id}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <PostCard post={el} />
+                </Grid>
+              ))
+            )}
+          </Grid>
         </Stack>
-        <Grid container>{posts?.map((el) => <PostCard key={el?.id} />)}</Grid>
-      </Box>
+      )}
       <AddStationModal
         open={stationModalOpen}
         handleClose={() => {
@@ -94,7 +158,8 @@ export const Home = () => {
       <AddPostModal
         selectedStation={station!}
         open={postModalOpen}
-        handleClose={() => {
+        handleClose={(refetch) => {
+          if (refetch) postsInit(station?.id as string);
           setPostModalOpen(false);
         }}
       />

@@ -12,6 +12,7 @@ const stationSchema = new Schema<IStationDoc, IStationModel>(
     },
     createdBy: {
       type: Schema.Types.ObjectId,
+      ref: 'User'
     },
   },
   {

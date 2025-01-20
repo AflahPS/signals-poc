@@ -14,7 +14,7 @@ export const createStation = catchAsync(async (req: Request, res: Response) => {
 
 export const getStations = catchAsync(async (req: Request, res: Response) => {
   const filter = pick(req.query, ['createdBy']);
-  const options: IOptions = pick(req.query, ['sortBy', 'limit', 'page', 'projectBy']);
+  const options: IOptions = pick(req.query, ['sortBy', 'limit', 'page', 'projectBy', 'search', 'populate']);
   const result = await stationService.queryStations(filter, options);
   res.send(result);
 });

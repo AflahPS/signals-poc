@@ -13,6 +13,7 @@ const postSchema = new Schema<IPostDoc, IPostModel>(
     station: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: 'Station'
     },
     availableSignals: {
       type: [String],
@@ -29,10 +30,12 @@ const postSchema = new Schema<IPostDoc, IPostModel>(
     lastChangeBy: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     createdBy: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: 'User'
     },
   },
   {

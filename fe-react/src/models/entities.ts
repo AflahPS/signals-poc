@@ -26,6 +26,16 @@ export interface IPost extends MongoDoc {
   createdBy: string;
 }
 
+export interface IPostPopulated extends MongoDoc {
+  name: string;
+  station: IStation;
+  availableSignals: string[];
+  activeSignal: string;
+  lastChangeAt: Date;
+  lastChangeBy: IUser;
+  createdBy: IUser;
+}
+
 export interface IHistory extends MongoDoc {
   signal: string;
   post: string;

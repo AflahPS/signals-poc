@@ -157,6 +157,33 @@ export const AddPostModal: FC<Props> = ({
                 size="small"
               />
             </Stack>
+            <Grid container spacing={2}>
+              {availableSignals?.map((el) => (
+                <Grid item key={el}>
+                  <Badge
+                    overlap="circular"
+                    color={activeSignal === el ? 'success' : 'default'}
+                    badgeContent={activeSignal === el ? 'active' : ''}
+                    hidden={activeSignal !== el}
+                  >
+                    <Box
+                      component="span"
+                      onClick={() => {
+                        setActiveSignal(el);
+                      }}
+                      sx={{
+                        borderRadius: '50%',
+                        bgcolor: Signals[el as keyof typeof Signals],
+                        border: '1px solid Highlight',
+                        width: 40,
+                        height: 40,
+                        cursor: 'pointer',
+                      }}
+                    />
+                  </Badge>
+                </Grid>
+              ))}
+            </Grid>
             <Stack gap="6px" width="100%">
               <Typography
                 variant="subtitle1"
@@ -167,11 +194,16 @@ export const AddPostModal: FC<Props> = ({
               </Typography>
               <Autocomplete
                 multiple
+                size="small"
+                limitTags={5}
                 id="tags-outlined"
                 options={Object.keys(Signals)}
-                // getOptionLabel={(option) => option.title}
-                filterSelectedOptions
-                onChange={(_, values) => setAvailableSignals(values)}
+                disableCloseOnSelect
+                onChange={(_, values) => {
+                  if (values?.length && !activeSignal)
+                    setActiveSignal(values[0]);
+                  setAvailableSignals(values);
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -181,24 +213,6 @@ export const AddPostModal: FC<Props> = ({
                 )}
               />
             </Stack>
-            <Grid container>
-              {availableSignals?.map((el) => (
-                <Badge key={el} overlap="circular" badgeContent="">
-                  <Box
-                    component="span"
-                    onClick={() => {
-                      setActiveSignal(el);
-                    }}
-                    sx={{
-                      borderRadius: '50%',
-                      bgcolor: Signals[el as keyof typeof Signals],
-                      width: 40,
-                      height: 40,
-                    }}
-                  />
-                </Badge>
-              ))}
-            </Grid>
             <Stack gap="10px" width="100%" direction="row" pt="12px">
               <Button
                 variant="contained"

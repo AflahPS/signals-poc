@@ -12,7 +12,7 @@ export const createHistory = catchAsync(async (req: Request, res: Response) => {
 
 export const getHistory = catchAsync(async (req: Request, res: Response) => {
   const filter = pick(req.query, ['post', 'changedBy', 'signal']);
-  const options: IOptions = pick(req.query, ['sortBy', 'limit', 'page', 'projectBy', 'search']);
+  const options: IOptions = pick(req.query, ['sortBy', 'limit', 'page', 'projectBy', 'search', 'populate']);
   const result = await historyService.queryHistorys(filter, options);
   res.send(result);
 });

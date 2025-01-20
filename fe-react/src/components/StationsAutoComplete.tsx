@@ -66,9 +66,7 @@ export const StationsAutocomplete: FC<Props> = ({
   );
 
   useEffect(() => {
-    if (stationSearch.trim()) {
-      debouncedStationsInit(stationSearch);
-    }
+    debouncedStationsInit(stationSearch);
     return () => {
       debouncedStationsInit.clear();
     };
