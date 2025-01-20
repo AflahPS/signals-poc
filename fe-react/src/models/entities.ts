@@ -42,6 +42,12 @@ export interface IHistory extends MongoDoc {
   changedBy: string;
 }
 
+export interface IHistoryPopulated extends MongoDoc {
+  signal: string;
+  post: string;
+  changedBy: IUser;
+}
+
 export interface PostSocketResponse {
   operationType: 'insert' | 'update' | 'delete';
   post: IPostPopulated;

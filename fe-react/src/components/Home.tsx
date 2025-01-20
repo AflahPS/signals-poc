@@ -1,19 +1,6 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  IconButton,
-  InputAdornment,
-  Stack,
-  TextField,
-} from '@mui/material';
+import { Box, Button, CircularProgress, Grid, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  AddOutlined,
-  RestartAltOutlined,
-  SearchOutlined,
-} from '@mui/icons-material';
+import { AddOutlined, RestartAltOutlined } from '@mui/icons-material';
 import { io } from 'socket.io-client';
 import { StationsAutocomplete } from './StationsAutoComplete';
 import { IPostPopulated, IStation, PostSocketResponse } from '../models';
@@ -22,12 +9,16 @@ import { AddStationModal } from './AddStationModal';
 import { deletePost, getPosts } from '../services';
 import { AddPostModal } from './AddPostModal';
 import { baseURL } from '../config';
+import { HistoryModal } from './HistoryModal';
 
 export const Home = () => {
   const [station, setStation] = useState<IStation | undefined>();
   const [posts, setPosts] = useState<IPostPopulated[]>([]);
   const [selectedPost, setSelectedPost] = useState<IPostPopulated>();
+  const [selectedHistoryPost, setSelectedHistoryPost] =
+    useState<IPostPopulated>();
   const [stationModalOpen, setStationModalOpen] = useState(false);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [postModalOpen, setPostModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -80,6 +71,11 @@ export const Home = () => {
   const handleUpdateClick = useCallback(async (post: IPostPopulated) => {
     setSelectedPost(post);
     setPostModalOpen(true);
+  }, []);
+
+  const handleHistoryClick = useCallback(async (post: IPostPopulated) => {
+    setSelectedHistoryPost(post);
+    setHistoryModalOpen(true);
   }, []);
 
   const handleSignalUpdate = useCallback(
@@ -181,9 +177,17 @@ export const Home = () => {
         </Button>
       </Box>
       {station && (
-        <Stack spacing={2} width="100%" minHeight="25vh" py={2} px={1}>
+        <Stack
+          spacing={2}
+          width="100%"
+          minHeight="25vh"
+          py={2}
+          px={1}
+          border="1px solid lightgrey"
+          borderRadius="6px"
+        >
           <Stack width="100%" direction="row" justifyContent="space-between">
-            <TextField
+            {/* <TextField
               size="small"
               fullWidth
               sx={{ width: '50%' }}
@@ -197,7 +201,8 @@ export const Home = () => {
                   </InputAdornment>
                 ),
               }}
-            />
+            /> */}
+            <Box />
             <Button
               variant="contained"
               startIcon={<AddOutlined />}
@@ -239,6 +244,9 @@ export const Home = () => {
                     onUpdate={() => {
                       handleUpdateClick(el);
                     }}
+                    onHistoryClick={() => {
+                      handleHistoryClick(el);
+                    }}
                     onSignalUpdate={handleSignalUpdate}
                   />
                 </Grid>
@@ -262,6 +270,14 @@ export const Home = () => {
           setSelectedPost(undefined);
           setPostModalOpen(false);
         }}
+      />
+      <HistoryModal
+        open={historyModalOpen}
+        onClose={() => {
+          setSelectedHistoryPost(undefined);
+          setHistoryModalOpen(false);
+        }}
+        post={selectedHistoryPost!}
       />
     </Stack>
   );

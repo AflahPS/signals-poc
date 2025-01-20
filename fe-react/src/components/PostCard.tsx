@@ -24,6 +24,7 @@ interface Props {
   post: IPostPopulated;
   onDelete: () => void;
   onUpdate: () => void;
+  onHistoryClick: () => void;
   // eslint-disable-next-line no-unused-vars
   onSignalUpdate: (post: IPostPopulated, _: string) => void;
 }
@@ -33,6 +34,7 @@ export const PostCard: FC<Props> = ({
   onDelete,
   onUpdate,
   onSignalUpdate,
+  onHistoryClick,
 }) => {
   const { activeSignal, availableSignals, name, lastChangeAt, lastChangeBy } =
     post;
@@ -51,6 +53,11 @@ export const PostCard: FC<Props> = ({
 
   const handleUpdate = () => {
     onUpdate();
+    setAnchorEl(null);
+  };
+
+  const handleHistory = () => {
+    onHistoryClick();
     setAnchorEl(null);
   };
 
@@ -192,7 +199,11 @@ export const PostCard: FC<Props> = ({
       </CardContent>
       <CardActions>
         <Stack justifyContent="center" width="100%">
-          <Button size="small" sx={{ textTransform: 'none' }}>
+          <Button
+            size="small"
+            onClick={() => handleHistory()}
+            sx={{ textTransform: 'none' }}
+          >
             See History
           </Button>
         </Stack>
