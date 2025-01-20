@@ -89,8 +89,6 @@ export const AddPostModal: FC<Props> = ({
         setLoading(false);
         return;
       }
-      // eslint-disable-next-line no-alert
-      alert(`Successfully ${isEdit ? 'edited the' : 'created a new'} post!`);
       setLoading(false);
       onClose(true);
       resetStates();

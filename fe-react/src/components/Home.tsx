@@ -78,20 +78,9 @@ export const Home = () => {
     setHistoryModalOpen(true);
   }, []);
 
-  const handleSignalUpdate = useCallback(
-    (post: IPostPopulated, newSignal: string) => {
-      if ([post.activeSignal, newSignal].includes('red')) {
-        const updatedPost = { ...post, activeSignal: newSignal };
-        setPosts((_posts) => {
-          const newArr = _posts.filter((p) => p.id !== updatedPost?.id);
-          if (updatedPost.activeSignal === 'red')
-            return [updatedPost, ...newArr];
-          return [...newArr, updatedPost];
-        });
-      }
-    },
-    []
-  );
+  const handleSignalUpdate = useCallback(() => {
+    postsInit(station?.id as string);
+  }, [postsInit, station?.id]);
 
   useEffect(() => {
     if (station) postsInit(station.id);
@@ -116,26 +105,7 @@ export const Home = () => {
       }
 
       if (operationType === 'update') {
-        const postIndex = posts?.findIndex((p) => p.id === updatedPost?.id);
-        // signal change
-        if (posts[postIndex]?.activeSignal !== updatedPost?.activeSignal) {
-          if (updatedPost.activeSignal === 'red') {
-            setPosts((prev) => [
-              updatedPost,
-              ...(prev.splice(postIndex, 1) && prev),
-            ]);
-          } else
-            setPosts((prev) => [
-              ...(prev.splice(postIndex, 1) && prev),
-              updatedPost,
-            ]);
-        }
-        // other field change
-        setPosts((prev) => {
-          const newArr = [...prev];
-          newArr[postIndex] = updatedPost;
-          return newArr;
-        });
+        postsInit(station?.id as string);
       }
     });
 
@@ -170,7 +140,8 @@ export const Home = () => {
           startIcon={<RestartAltOutlined />}
           sx={{ textTransform: 'none', textWrap: 'nowrap' }}
           onClick={() => {
-            setStationModalOpen(true);
+            setStation(undefined);
+            setPosts([]);
           }}
         >
           Reset
