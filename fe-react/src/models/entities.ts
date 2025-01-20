@@ -28,16 +28,21 @@ export interface IPost extends MongoDoc {
 
 export interface IPostPopulated extends MongoDoc {
   name: string;
-  station: IStation;
+  station: string;
   availableSignals: string[];
   activeSignal: string;
   lastChangeAt: Date;
   lastChangeBy: IUser;
-  createdBy: IUser;
+  createdBy: string;
 }
 
 export interface IHistory extends MongoDoc {
   signal: string;
   post: string;
   changedBy: string;
+}
+
+export interface PostSocketResponse {
+  operationType: 'insert' | 'update' | 'delete';
+  post: IPostPopulated;
 }

@@ -24,8 +24,66 @@ export const createPost = async (postBody: PostBody): Promise<IPostDoc> => {
  * @returns {Promise<QueryResult>}
  */
 export const queryPosts = async (filter: Record<string, any>, options: IOptions): Promise<QueryResult> => {
-  const posts = await Post.paginate(filter, options, ['name']);
-  return posts;
+  const limit = options.limit && parseInt(options.limit.toString(), 10) > 0 ? parseInt(options.limit.toString(), 10) : 10;
+  const page = options.page && parseInt(options.page.toString(), 10) > 0 ? parseInt(options.page.toString(), 10) : 1;
+  const skip = (page - 1) * limit;
+
+  const sortBy = options.sortBy ?? 'updatedAt:desc';
+  const additionalSorting = sortBy?.includes(':')
+    ? { [sortBy.split(':')[0]!]: sortBy.split(':')[1] === 'desc' ? -1 : 1 }
+    : {};
+
+  if (filter?.['station']) filter['station'] = new Types.ObjectId(filter['station']);
+  if (filter?.['lastChangeBy']) filter['lastChangeBy'] = new Types.ObjectId(filter['lastChangeBy']);
+  if (filter?.['createdBy']) filter['createdBy'] = new Types.ObjectId(filter['createdBy']);
+  filter['isDeleted'] = false;
+
+  const pipeline: any[] = [
+    { $match: filter },
+    {
+      $addFields: {
+        priority: {
+          $cond: { if: { $eq: ['$activeSignal', 'red'] }, then: 0, else: 1 },
+        },
+        id: '$_id',
+      },
+    },
+    { $sort: { priority: 1, ...additionalSorting } },
+    { $skip: skip },
+    { $limit: limit },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'lastChangeBy',
+        foreignField: '_id',
+        as: 'lastChangeBy',
+      },
+    },
+    {
+      $unwind: {
+        path: '$lastChangeBy',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        'lastChangeBy.password': 0,
+      },
+    },
+  ];
+
+  const countPromise = Post.countDocuments(filter).exec();
+  const docsPromise = Post.aggregate(pipeline).exec();
+  const [totalResults, results] = await Promise.all([countPromise, docsPromise]);
+  const totalPages = Math.ceil(totalResults / limit);
+
+  return {
+    results,
+    page,
+    limit,
+    totalPages,
+    totalResults,
+  };
 };
 
 /**
@@ -64,6 +122,7 @@ export const deletePostById = async (postId: Types.ObjectId): Promise<IPostDoc |
   if (!post) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Post not found');
   }
-  await post.deleteOne();
+  post.isDeleted = true;
+  await post.save();
   return post;
 };

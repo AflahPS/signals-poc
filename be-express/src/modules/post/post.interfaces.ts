@@ -9,6 +9,7 @@ export interface IPost {
   lastChangeAt: Date;
   lastChangeBy: Types.ObjectId;
   createdBy: Types.ObjectId;
+  isDeleted: boolean;
 }
 
 export interface IPostDoc extends IPost, Document {}

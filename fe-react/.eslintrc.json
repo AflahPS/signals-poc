@@ -72,6 +72,7 @@
     "no-underscore-dangle": 0,
     "@typescript-eslint/naming-convention": 0,
     "import/no-cycle": 0,
-    "react/require-default-props": 0
+    "react/require-default-props": 0,
+    "consistent-return": 0
   }
 }

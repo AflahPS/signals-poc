@@ -10,6 +10,7 @@ const createPostBody: Record<keyof PostBody, any> = {
   lastChangeAt: Joi.string().isoDate(),
   lastChangeBy: Joi.string().custom(objectId),
   createdBy: Joi.string().custom(objectId),
+  isDeleted: Joi.boolean()
 };
 
 export const createPost = {

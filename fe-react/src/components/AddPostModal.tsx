@@ -16,21 +16,21 @@ import {
   Badge,
 } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
-import { IPost, IStation } from '../models';
+import { IPostPopulated, IStation } from '../models';
 import { createPost, editPost } from '../services';
 import { globalSx, Signals } from '../config';
 
 interface Props {
   open: boolean;
   // eslint-disable-next-line no-unused-vars
-  handleClose: (refetch?: boolean) => void;
+  onClose: (refetch?: boolean) => void;
   selectedStation: IStation;
-  post?: IPost;
+  post?: IPostPopulated;
 }
 
 export const AddPostModal: FC<Props> = ({
   open,
-  handleClose,
+  onClose,
   post,
   selectedStation,
 }) => {
@@ -92,12 +92,17 @@ export const AddPostModal: FC<Props> = ({
       // eslint-disable-next-line no-alert
       alert(`Successfully ${isEdit ? 'edited the' : 'created a new'} post!`);
       setLoading(false);
-      handleClose(true);
+      onClose(true);
       resetStates();
     } catch (error) {
       setLoading(false);
       console.error(error);
     }
+  };
+
+  const handleClose = () => {
+    resetStates();
+    onClose();
   };
 
   return (
@@ -204,6 +209,7 @@ export const AddPostModal: FC<Props> = ({
                     setActiveSignal(values[0]);
                   setAvailableSignals(values);
                 }}
+                value={availableSignals}
                 renderInput={(params) => (
                   <TextField
                     {...params}

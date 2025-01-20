@@ -37,6 +37,10 @@ const postSchema = new Schema<IPostDoc, IPostModel>(
       required: true,
       ref: 'User'
     },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,

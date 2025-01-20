@@ -6,12 +6,18 @@ import ApiError from '../utils/errors/ApiError';
 import pick from '../utils/pick';
 import { IOptions } from '../utils/paginate/paginate';
 import * as postService from './post.service';
+import { historyService } from '../history';
 
 export const createPost = catchAsync(async (req: Request, res: Response) => {
   req.body['createdBy'] = req.user._id;
   req.body['lastChangeBy'] = req.user._id;
   req.body['lastChangeAt'] = new Date();
   const post = await postService.createPost(req.body);
+  await historyService.createHistory({
+    changedBy: post.lastChangeBy,
+    post: post._id,
+    signal: post.activeSignal,
+  });
   res.status(httpStatus.CREATED).send(post);
 });
 
@@ -34,7 +40,16 @@ export const getPost = catchAsync(async (req: Request, res: Response) => {
 
 export const updatePost = catchAsync(async (req: Request, res: Response) => {
   if (typeof req.params['postId'] === 'string') {
+    req.body['lastChangeBy'] = req.user._id;
+    req.body['lastChangeAt'] = new Date();
     const post = await postService.updatePostById(new mongoose.Types.ObjectId(req.params['postId']), req.body);
+    if (post) {
+      await historyService.createHistory({
+        changedBy: post!.lastChangeBy,
+        post: post!._id,
+        signal: post!.activeSignal,
+      });
+    }
     res.send(post);
   }
 });

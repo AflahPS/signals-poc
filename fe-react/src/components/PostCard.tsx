@@ -15,30 +15,65 @@ import {
 } from '@mui/material';
 import { MoreVertOutlined } from '@mui/icons-material';
 import dayjs from 'dayjs';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { IPostPopulated } from '../models';
 import { Signals } from '../config';
+import { editPost } from '../services';
 
 interface Props {
   post: IPostPopulated;
+  onDelete: () => void;
+  onUpdate: () => void;
+  // eslint-disable-next-line no-unused-vars
+  onSignalUpdate: (post: IPostPopulated, _: string) => void;
 }
 
-export const PostCard: FC<Props> = ({ post }) => {
+export const PostCard: FC<Props> = ({
+  post,
+  onDelete,
+  onUpdate,
+  onSignalUpdate,
+}) => {
   const { activeSignal, availableSignals, name, lastChangeAt, lastChangeBy } =
     post;
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [localActiveSignal, setLocalActiveSignal] = useState<string>('');
 
   const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  useEffect(() => {
-    setLocalActiveSignal(post.activeSignal);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post.activeSignal]);
+  const handleDelete = () => {
+    onDelete();
+    setAnchorEl(null);
+  };
+
+  const handleUpdate = () => {
+    onUpdate();
+    setAnchorEl(null);
+  };
+
+  const handleSignalUpdate = useCallback(
+    async (newSignal: string) => {
+      if (activeSignal === newSignal) return;
+      // eslint-disable-next-line no-restricted-globals, no-alert
+      const isConfirm = confirm(
+        `This will update the signal from "${activeSignal}" to "${newSignal}", Are you sure to proceed ?`
+      );
+      if (!isConfirm) return;
+      const { data, error, message } = await editPost(post.id, {
+        activeSignal: newSignal,
+      });
+      if (!data && error) {
+        // eslint-disable-next-line no-alert
+        alert(message);
+        return;
+      }
+      onSignalUpdate(post, newSignal);
+    },
+    [activeSignal, onSignalUpdate, post]
+  );
 
   return (
     <Card
@@ -91,13 +126,7 @@ export const PostCard: FC<Props> = ({ post }) => {
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem
-            onClick={() => {
-              setAnchorEl(null);
-            }}
-          >
-            Edit
-          </MenuItem>
+          <MenuItem onClick={() => handleUpdate()}>Edit</MenuItem>
           <MenuItem
             onClick={() => {
               setAnchorEl(null);
@@ -105,13 +134,7 @@ export const PostCard: FC<Props> = ({ post }) => {
           >
             Clone
           </MenuItem>
-          <MenuItem
-            onClick={() => {
-              setAnchorEl(null);
-            }}
-          >
-            Delete
-          </MenuItem>
+          <MenuItem onClick={() => handleDelete()}>Delete</MenuItem>
         </Menu>
       </Box>
 
@@ -145,20 +168,13 @@ export const PostCard: FC<Props> = ({ post }) => {
               <Grid item key={el}>
                 <Badge
                   overlap="circular"
-                  color={localActiveSignal === el ? 'success' : 'default'}
-                  badgeContent={localActiveSignal === el ? 'active' : ''}
-                  hidden={localActiveSignal !== el}
+                  color={activeSignal === el ? 'success' : 'default'}
+                  badgeContent={activeSignal === el ? 'active' : ''}
+                  hidden={activeSignal !== el}
                 >
                   <Box
                     component="span"
-                    onClick={() => {
-                      if (localActiveSignal === el) return;
-                      // eslint-disable-next-line no-restricted-globals, no-alert
-                      const isConfirm = confirm(
-                        `This will update the signal from "${activeSignal}" to "${el}", Are you sure to proceed ?`
-                      );
-                      if (isConfirm) setLocalActiveSignal(el);
-                    }}
+                    onClick={() => handleSignalUpdate(el)}
                     sx={{
                       borderRadius: '50%',
                       bgcolor: Signals[el as keyof typeof Signals],
